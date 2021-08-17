@@ -65,6 +65,15 @@ function getZodiac(date = new Date()) {
 // 计算季节
 function getSeason(date=new Date()) {
     let month = date.getMonth() + 1;
+    // if([12,1,2].includes(month)) {
+    //     return '冬天(12、1、2月)';
+    // }else if([3,4,5].includes(month)) {
+    //     return '春天(3、4、5月)';
+    // }else if([6,7,8].includes(month)) {
+    //     return '夏天(6、7、8月)';
+    // }else {
+    //     return '秋天(9、10、11月)';
+    // }
     if([12,1,2].includes(month)) {
         return '冬天';
     }else if([3,4,5].includes(month)) {

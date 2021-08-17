@@ -1,9 +1,9 @@
 <template>
     <div id="main-page">
         <!-- 配置 -->
-        <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }"
+        <!-- <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }"
             dashed>可修改项
-        </van-divider>
+        </van-divider> -->
         <!-- 配置 -->
         <van-cell :title="'孕期'+pregnantDayCmp">
             <template v-slot:icon>
@@ -15,9 +15,9 @@
             </template>
         </van-cell>
         <!-- 详情 -->
-        <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }"
+        <!-- <van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }"
             dashed>详情
-        </van-divider>
+        </van-divider> -->
         <!-- 详情 -->
         <van-cell title="怀孕" :value="pregnantDateRef" @click="pregnantDayShowRef = true">
             <template v-slot:icon>
@@ -36,10 +36,11 @@
         </van-cell>
         <van-cell title="季节" :value="seasonRef">
             <template v-slot:icon>
-                <van-icon class-prefix="my-love" name="shengridangao"></van-icon>
+                <van-icon class-prefix="my-love" name="dongtian"></van-icon>
             </template>
         </van-cell>
-        <van-cell title="生日" :value="birthDateRef">
+        <!-- @click="calendarShowRef = true" -->
+        <van-cell title="生日" :value="birthDateRef" >
             <template v-slot:icon>
                 <van-icon class-prefix="my-love" name="shengridangao"></van-icon>
             </template>
@@ -53,6 +54,9 @@
             </van-button>
         </div>
         <!-- 弹出层 -->
+        <van-calendar v-model:show="calendarShowRef" title="日历" color="#1989fa"
+            :show-confirm="false" :min-date="minDate" :max-date="maxDate"
+            :default-date="new Date(pregnantDateRef.value)" :row-height="32" :show-mark="false" />
         <!-- 出生日选择 -->
         <van-popup v-model:show="birthDayShowRef" position="bottom">
             <van-datetime-picker :title="zodiacAstroRef" v-model="currentDateRef" type="date"
@@ -61,7 +65,7 @@
         </van-popup>
         <!-- 开始日选择 -->
         <van-popup v-model:show="pregnantDayShowRef" position="bottom">
-            <van-datetime-picker title="请选择开始时间" v-model="currentDateRef" type="date"
+            <van-datetime-picker title="请选择怀孕时间" v-model="currentDateRef" type="date"
                 @change="onPregnantConfirm($event)" @confirm="onPregnantConfirm($event,true)"
                 @cancel="pregnantDayShowRef=false" :min-date="minDate" :max-date="maxDate" />
         </van-popup>
@@ -69,7 +73,7 @@
 </template>
 
 <script>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import moment from 'moment';
 import { getZodiac, getSeason } from './js/zodiac';
 const getAstro = (value) => {
@@ -85,18 +89,26 @@ export default {
         const birthDateRef = ref(moment(new Date).add(365, "days").format('YYYY-MM-DD'));
         const birthDayShowRef = ref(false);
         const pregnantDayShowRef = ref(false);
+        const calendarShowRef = ref(false);
         const fetationWekRef = ref(40);
         const pregnantDateRef = ref(moment(birthDateRef.value).add(fetationWekRef.value * -7, "days").format('YYYY-MM-DD'));
         const currentDateRef = ref(new Date());
         const zodiacAstroRef = ref(`${getZodiac(currentDateRef.value)} - ${getAstro(currentDateRef.value)}`); // 获取生肖
         const seasonRef = ref(getSeason(currentDateRef.value));
 
-        /**方法定义 */
+        /**计算属性 */
         const pregnantDayCmp = computed(() => {
             let allDay = fetationWekRef.value * 7;
             let monthDay = `约${parseInt(allDay / 30)}月${allDay % 30}天`
             return `(${allDay})` + monthDay;
         })
+        watch(fetationWekRef, (newProp, oldProp) => {
+            // 更改pregnantDateRef
+            pregnantDateRef.value = moment(birthDateRef.value).add(newProp * -7, "days").format('YYYY-MM-DD');
+        }, {
+            immediate: true
+        })
+        /**方法定义 */
         const onBirthConfirm = (value, isClose) => {
             if (isClose) birthDayShowRef.value = false;
             birthDateRef.value = `${moment(value).format('YYYY-MM-DD')}`;
@@ -118,6 +130,7 @@ export default {
             minDate: new Date(),
             maxDate: new Date(2024, 11, 31),
             seasonRef,
+            calendarShowRef,
             zodiacAstroRef,
             pregnantDateRef,
             fetationWekRef,
@@ -141,7 +154,7 @@ export default {
     padding: 20px;
     .submit-btn {
         margin: 0 auto;
-        margin-top: 200px;
+        margin-top: 150px;
     }
 }
 </style>
