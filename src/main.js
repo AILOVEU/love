@@ -4,7 +4,8 @@ import 'lib-flexible/flexible'
 import App from './App.vue'
 // import router from './router'
 import 'vant/lib/index.css'; // 全局引入样式
-// import './index.css'
+// import './assets/iconfont.css'
+import './css/index.css'
 
 const app = createApp(App) // 创建实例
 
