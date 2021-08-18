@@ -124,7 +124,7 @@ export default {
             zodiacAstroRef.value = `${getZodiac(new Date(birthDateRef.value))} - ${getAstro(new Date(birthDateRef.value))}`;
             seasonRef.value = getSeason(value);
         }
-
+ 
         /**暴露方法函数 */
         return {
             minDate: new Date(),
